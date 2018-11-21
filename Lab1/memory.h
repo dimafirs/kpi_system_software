@@ -41,4 +41,4 @@ typedef struct {
 
 #define init_virt_page(page)	({\
 	page.state = NOREF;	\
-	page.page = NULL;	\})
+	page.page = NULL;	})

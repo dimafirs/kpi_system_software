@@ -1,6 +1,5 @@
-#include "memory.h"
-
-#include "process_sim.c"
+#include "process_sim.h"
+#include "task.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,18 +8,13 @@
 #define PAGE_SIZE 1024
 #define PROC_NUM 10
 
-struct task_struct {
-	uint32_t pid;
-	virt_mem_page *pages;
-	uint32_t page_count;
-};
 
 static phys_mem_page mem_pool[POOL_SIZE] = {0};
 static struct task_struct tasks[PROC_NUM] = {0};
 static unsigned long sys_time = 0;
 
 int main(){
-	printf("Initialize memory pool...");
+	printf("Initialize memory pool...\n");
 	init_memory();
 
 }

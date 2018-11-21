@@ -1,7 +1,10 @@
+#include "task.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include <stdint.h>
 
 #define MAX_PAGE_NUM 30
 
@@ -14,7 +17,7 @@ int init_random(){
 	seed = fread(&seed, sizeof(seed), 1, urand);
 	if(ferror(urand))
 		return -1;
-
+	srand(seed);
 }
 int init_process(struct task_struct *process, uint32_t id) {
 	uint32_t i, mem_size;
@@ -27,7 +30,7 @@ int init_process(struct task_struct *process, uint32_t id) {
 		return -1;
 	memset(process->pages, 0, mem_size);
 	for(i = 0; i < process->page_count; i++)
-		init_virt_page(process->pages[i]);
+		process->pages[i].page = NULL;
 	return 0;
 }
 

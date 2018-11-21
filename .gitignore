@@ -52,6 +52,7 @@ Mkfile.old
 dkms.conf
 
 #Custom
+Lab1/mem_manager
 Lab1/.settings/
 Lab1/Debug/
 .cproject
