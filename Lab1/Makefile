@@ -1,6 +1,6 @@
 TARGET = mem_manager
 CC = gcc
-FLAGS = -O3 -std=c11
+FLAGS = -O3 -std=c11 -lm
 OBJ = memory.o process_sim.o mem_manager.o
 
 .PHONY: clean

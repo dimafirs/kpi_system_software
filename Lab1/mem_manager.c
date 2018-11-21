@@ -3,30 +3,43 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-#define POOL_SIZE 200
-#define PAGE_SIZE 1024
 #define PROC_NUM 10
 
 
-static phys_mem_page mem_pool[POOL_SIZE] = {0};
 static struct task_struct tasks[PROC_NUM] = {0};
 static unsigned long sys_time = 0;
 
 int main(){
-	printf("Initialize memory pool...\n");
-	init_memory();
+	int err;
+	printf("Initialize...\n");
+	if(err = init()){
+		printf("Error occurs during initialization\n");
+		exit(err);
+	}
 
+	for(uint32_t i = 0; i<1000; i++){
+		for(uint32_t j = 0; j<PROC_NUM; j++){
+			on_exec(&tasks[j], 10);
+		}
+		mem_deamon(*tasks, PROC_NUM, i);
+	}
+	exit(0);
 }
 
-void init_memory() {
+int init(void) {
 	uint32_t i;
 
-	for(i = 0; i < POOL_SIZE; i++){
-		init_phys_page(mem_pool[i], i, PAGE_SIZE);
-	}
+	if(init_random())
+		return -1;
+	if(init_memory())
+		return -1;
 
 	for(i = 0; i < PROC_NUM; i++){
 		init_process(&tasks[i], i);
 	}
+
+	return 0;
+
 }
