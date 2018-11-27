@@ -14,7 +14,9 @@ int init_random(){
 	FILE *urand = fopen("/dev/urandom", "rb");
 	if (NULL == urand)
 		return -1;
-	fread(&seed, sizeof(seed), 1, urand);
+	if(1 != fread(&seed, sizeof(seed), 1, urand)){
+		return -1;
+	}
 	printf("seed = %d\n", seed);
 	if(ferror(urand))
 		return -1;
@@ -40,25 +42,27 @@ int init_process(struct task_struct *process, uint32_t id) {
  * pages with probability of 90%.
  */
 static uint32_t get_rand_page(uint32_t count) {
-	double r = (double) rand() / RAND_MAX;
-	printf("r=%2f\n", r);
-	uint32_t divider = count/5;
-	uint32_t e = 0;
+	double r;
+	uint32_t divider, e;
+	r = (double) rand() / RAND_MAX;
+	divider = (uint32_t) (count-1)/5 + 1;
+	uint32_t random = rand();
 	if (r < 0.9){
-		 return (rand()*count)%divider;
+		return random%divider;
+	} else {
+		return ((random)%(count));
 	}
-	else
-		return ( (rand()*count)%(4*divider) + divider );
+	return -1;
 }
 
-void on_exec(struct task_struct *process, uint32_t iteration){
-	uint32_t i, page;
-	/* Defines randomly, 0 is read, 1 is write */
-	for(i = 0; i < iteration; i++){
-		page = get_rand_page(process->page_count);
-		mem_op(process, page, i);
+void on_exec(struct task_struct *process, uint32_t proc_num, uint32_t iteration){
+	uint32_t i, j, page;
+	for(i = 0; i < proc_num; i++){
+		for(j = 0; j < iteration; j++){
+			page = get_rand_page(process->page_count);
+			mem_op(process, page, j);
+		}
 	}
-
 }
 
 

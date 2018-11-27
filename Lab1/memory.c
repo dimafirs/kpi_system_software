@@ -1,6 +1,7 @@
 #include "memory.h"
 
 #include <stddef.h>
+#include <stdio.h>
 #include <stdint.h>
 
 #define POOL_SIZE 200
@@ -12,9 +13,11 @@ static int init_phys_page(phys_mem_page *page, uint32_t index, uint32_t size){
 	page->id = index;
 	page->state = FREE;
 	page->data = malloc(size);
-	if(!(page->data))
+	if(NULL == page->data){
+		printf("mem_error\n");
 		return -1;
-	page->addr = size * index;
+	}
+	page->addr = (uintptr_t) size * index;
 	return 0;
 }
 
@@ -64,4 +67,5 @@ int init_memory(void) {
 		if(init_phys_page(&mem_pool[i], i, PAGE_SIZE))
 			return -1;
 	}
+	return 0;
 }

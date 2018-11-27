@@ -5,7 +5,7 @@ OBJ = memory.o process_sim.o mem_manager.o
 
 .PHONY: clean
 
-all: $(TARGET)
+all: clean $(TARGET)
 
 %.o: %.c
 	$(CC) $(FLAGS) $< -c -o $@

@@ -22,7 +22,7 @@ enum virt_page_state {
 typedef struct {
 	uint32_t id;
 	enum phys_page_state state;
-	uintptr_t *addr;
+	uintptr_t addr;
 	uint8_t *data;
 } phys_mem_page;
 

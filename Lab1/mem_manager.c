@@ -16,6 +16,7 @@ int init(void) {
 
 	if(init_random())
 		return -1;
+	printf("Random OK\n");
 	if(init_memory())
 		return -1;
 
@@ -28,7 +29,7 @@ int init(void) {
 }
 
 int main(){
-	int err;
+	int err = 0;
 	printf("Initialize...\n");
 	if(err = init()){
 		printf("Error occurs during initialization\n");
@@ -36,10 +37,9 @@ int main(){
 	}
 
 	for(uint32_t i = 0; i<1000; i++){
-		for(uint32_t j = 0; j<PROC_NUM; j++){
-			on_exec(&tasks[j], 10);
-		}
+		on_exec(tasks, PROC_NUM, 10);
 		mem_deamon(tasks, PROC_NUM, i);
 	}
+	printf("Successfully end simulation\n");
 	exit(0);
 }
