@@ -55,12 +55,18 @@ static uint32_t get_rand_page(uint32_t count) {
 	return -1;
 }
 
-void on_exec(struct task_struct *process, uint32_t proc_num, uint32_t iteration){
+void on_exec(struct task_struct *task_pool, uint32_t proc_num, uint32_t iteration){
 	uint32_t i, j, page;
 	for(i = 0; i < proc_num; i++){
 		for(j = 0; j < iteration; j++){
-			page = get_rand_page(process->page_count);
-			mem_op(process, page, j);
+			page = get_rand_page(task_pool[i].page_count);
+			if(mem_op(&task_pool[i], page, j)){
+				if(page_fault(&task_pool[i], page)){
+					mem_swaping(task_pool, proc_num, j);
+					page_fault(&task_pool[j], page);
+				}
+				mem_op(&task_pool[j], page, j);
+			}
 		}
 	}
 }
