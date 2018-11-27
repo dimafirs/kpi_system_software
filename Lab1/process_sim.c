@@ -60,12 +60,14 @@ void on_exec(struct task_struct *task_pool, uint32_t proc_num, uint32_t iteratio
 	for(i = 0; i < proc_num; i++){
 		for(j = 0; j < iteration; j++){
 			page = get_rand_page(task_pool[i].page_count);
-			if(mem_op(&task_pool[i], page, j)){
+			/* i*j - is global number of iteration */
+			if(mem_op(&task_pool[i], page, i*j)){
 				if(page_fault(&task_pool[i], page)){
-					mem_swaping(task_pool, proc_num, j);
+					printf("NO FREE PAGES\n");
+					mem_swaping(task_pool, proc_num, i*j);
 					page_fault(&task_pool[j], page);
 				}
-				mem_op(&task_pool[j], page, j);
+				mem_op(&task_pool[j], page, i*j);
 			}
 		}
 	}
