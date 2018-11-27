@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdlib.h>
 #include <stddef.h>
 
 
@@ -33,11 +34,11 @@ typedef struct {
 	phys_mem_page *page;
 } virt_mem_page;
 
-#define init_phys_page(page, index, size) ({ \
-	page.id = index; 		\
-	page.state = FREE;		\
-	page.data = malloc(size);	\
-	page.addr = size * index;	})
+struct task_struct {
+	uint32_t pid;
+	virt_mem_page *pages;
+	uint32_t page_count;
+};
 
 #define init_virt_page(page)	({\
 	page.state = NOREF;	\
@@ -45,4 +46,4 @@ typedef struct {
 
 void mem_op(struct task_struct *process, uint32_t page, uint32_t iter);
 void mem_deamon(struct task_struct *task_pool, uint32_t proc_num, uint32_t iter);
-void init_memory();
+int init_memory();

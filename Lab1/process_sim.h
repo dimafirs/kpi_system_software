@@ -1,3 +1,5 @@
+#include "memory.h"
+
 #include <stdint.h>
 
 int init_random();
