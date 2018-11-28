@@ -55,18 +55,24 @@ static uint32_t get_rand_page(uint32_t count) {
 	return -1;
 }
 
-void on_exec(struct task_struct *task_pool, uint32_t proc_num, uint32_t iteration){
-	uint32_t i, j, page;
+void on_exec(struct task_struct *task_pool, uint32_t proc_num,
+		uint32_t glob_iteration, uint32_t iters)
+{
+	uint32_t i, j, page, curr_iter;
 	for(i = 0; i < proc_num; i++){
-		for(j = 0; j < iteration; j++){
+		for(j = 0; j < iters; j++){
 			page = get_rand_page(task_pool[i].page_count);
-			if(mem_op(&task_pool[i], page, j)){
+			/* This is global number of iteration */
+			curr_iter = i + j + glob_iteration;
+			if(mem_op(&task_pool[i], page, curr_iter)){
 				if(page_fault(&task_pool[i], page)){
-					mem_swaping(task_pool, proc_num, j);
+					mem_swaping(task_pool, proc_num, curr_iter);
 					page_fault(&task_pool[j], page);
 				}
-				mem_op(&task_pool[j], page, j);
+				mem_op(&task_pool[j], page, curr_iter);
 			}
+			/*printf("task %u, page %u, page stat: pres - %u, refer - %u \n", i, page,
+				task_pool[i].pages[page].flags.presence, task_pool[i].pages[page].flags.reference);*/
 		}
 	}
 }

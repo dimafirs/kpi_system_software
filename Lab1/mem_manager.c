@@ -9,7 +9,6 @@
 
 
 static struct task_struct tasks[PROC_NUM] = {0};
-static unsigned long sys_time = 0;
 
 int init(void) {
 	uint32_t i;
@@ -37,7 +36,7 @@ int main(){
 	}
 
 	for(uint32_t i = 0; i<1000; i++){
-		on_exec(tasks, PROC_NUM, 10);
+		on_exec(tasks, PROC_NUM, i, 5);
 		mem_deamon(tasks, PROC_NUM, i);
 	}
 	printf("Successfully end simulation\n");

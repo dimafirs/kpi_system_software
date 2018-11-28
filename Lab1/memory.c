@@ -4,18 +4,18 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define POOL_SIZE 200
+#define POOL_SIZE 150
 #define PAGE_SIZE 1024
-#define WORKING_SET_ITERATIONS 3
+#define WORKING_SET_ITERATIONS 15
 
 phys_mem_page mem_pool[POOL_SIZE] = {0};
 
-static int init_phys_page(phys_mem_page *page, uint32_t index, uint32_t size){
+static int init_phys_page(phys_mem_page *page, uint32_t index, uint32_t size) {
 	page->id = index;
 	page->state = FREE;
 	page->data = malloc(size);
 	if(NULL == page->data){
-		printf("mem_error\n");
+		printf("No memory\n");
 		return -1;
 	}
 	page->addr = (uintptr_t) size * index;
@@ -54,6 +54,7 @@ int page_fault(struct task_struct *process, uint32_t page){
 		return -1;
 	}
 	process->pages[page].state = ACTIVE;
+	process->pages[page].flags.presence = 1;
 	return 0;
 }
 
