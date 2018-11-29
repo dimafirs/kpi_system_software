@@ -6,6 +6,8 @@
 #include <time.h>
 
 #define PROC_NUM 10
+#define CYCLES 1000
+#define PROC_ITER 5
 
 
 static struct task_struct tasks[PROC_NUM] = {0};
@@ -35,9 +37,8 @@ int main(){
 		exit(err);
 	}
 
-	for(uint32_t i = 0; i<1000; i++){
-		on_exec(tasks, PROC_NUM, i, 5);
-		mem_deamon(tasks, PROC_NUM, i);
+	for(uint32_t i = 0; i<CYCLES; i++){
+		on_exec(tasks, PROC_NUM, i, PROC_ITER);
 	}
 	printf("Successfully end simulation\n");
 	exit(0);

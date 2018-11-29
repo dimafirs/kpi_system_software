@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define POOL_SIZE 150
+#define POOL_SIZE 80
 #define PAGE_SIZE 1024
-#define WORKING_SET_ITERATIONS 15
+#define WORKING_SET_ITERATIONS 50
 
 phys_mem_page mem_pool[POOL_SIZE] = {0};
 
@@ -23,20 +23,23 @@ static int init_phys_page(phys_mem_page *page, uint32_t index, uint32_t size) {
 }
 
 void mem_swaping(struct task_struct *task_pool, uint32_t proc_num, uint32_t iter){
-	uint32_t i, j;
+	uint32_t i, j, freed;
+	freed = 0; //number of physical pages that was swapped
 	for(i = 0; i < proc_num; i++){
 		for(j = 0; j < task_pool[i].page_count; j++){
-			if(task_pool[i].pages[j].flags.presence &&
+			if((task_pool[i].pages[j].flags.presence) &&
 					!(task_pool[i].pages[j].flags.reference))
 			{
-				if((task_pool[i].pages[j].ref_time - iter) < WORKING_SET_ITERATIONS) {
+				if( (iter - task_pool[i].pages[j].ref_time) > WORKING_SET_ITERATIONS) {
 					task_pool[i].pages[j].page->state = FREE;
 					task_pool[i].pages[j].state = INSWAP;
 					task_pool[i].pages[j].flags.presence = 0;
+					freed++;
 				}
 			}
 		}
 	}
+	printf("Successfully free %u pages. Swapping occurs at %u iteration\n", freed, iter);
 }
 
 phys_mem_page *assign_free_page(void){
@@ -69,8 +72,12 @@ int mem_op(struct task_struct *process, uint32_t page, uint32_t iter)
 	return 0;
 }
 
-void mem_deamon(struct task_struct *task_pool, uint32_t proc_num, uint32_t iter){
-
+void mem_deamon(struct task_struct *task_pool, uint32_t proc_num){
+	uint32_t i, j;
+	for(i = 0; i < proc_num; i++){
+		for(j = 0; j < task_pool[i].page_count; j++)
+			task_pool[i].pages[j].flags.reference = 0;
+	}
 }
 
 int init_memory(void) {

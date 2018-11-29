@@ -8,6 +8,7 @@
 #include <stdint.h>
 
 #define MAX_PAGE_NUM 30
+static uint32_t global_time = 0;
 
 int init_random(){
 	uint32_t seed;
@@ -58,23 +59,25 @@ static uint32_t get_rand_page(uint32_t count) {
 void on_exec(struct task_struct *task_pool, uint32_t proc_num,
 		uint32_t glob_iteration, uint32_t iters)
 {
-	uint32_t i, j, page, curr_iter;
+	uint32_t i, j, page;
 	for(i = 0; i < proc_num; i++){
 		for(j = 0; j < iters; j++){
 			page = get_rand_page(task_pool[i].page_count);
 			/* This is global number of iteration */
-			curr_iter = i + j + glob_iteration;
-			if(mem_op(&task_pool[i], page, curr_iter)){
+			global_time++;
+			if(mem_op(&task_pool[i], page, global_time)){
 				if(page_fault(&task_pool[i], page)){
-					mem_swaping(task_pool, proc_num, curr_iter);
-					page_fault(&task_pool[j], page);
+					mem_swaping(task_pool, proc_num, global_time);
+					page_fault(&task_pool[i], page);
 				}
-				mem_op(&task_pool[j], page, curr_iter);
+				if(mem_op(&task_pool[i], page, global_time)){
+					/* Impossible after memory swapping */
+					printf("Something totally go wrong\n");
+				}
 			}
-			/*printf("task %u, page %u, page stat: pres - %u, refer - %u \n", i, page,
-				task_pool[i].pages[page].flags.presence, task_pool[i].pages[page].flags.reference);*/
 		}
 	}
+	mem_deamon(task_pool, proc_num);
 }
 
 
