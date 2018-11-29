@@ -18,10 +18,11 @@ int init_random(){
 	if(1 != fread(&seed, sizeof(seed), 1, urand)){
 		return -1;
 	}
-	printf("seed = %d\n", seed);
 	if(ferror(urand))
 		return -1;
 	srand(seed);
+	printf("Random initialized. Random seed = %d\n", seed);
+	return 0;
 }
 int init_process(struct task_struct *process, uint32_t id) {
 	uint32_t i, mem_size;

@@ -48,4 +48,5 @@ int mem_op(struct task_struct *process, uint32_t page, uint32_t iter);
 int page_fault(struct task_struct *process, uint32_t page);
 void mem_swaping(struct task_struct *task_pool, uint32_t proc_num, uint32_t iter);
 void mem_deamon(struct task_struct *task_pool, uint32_t proc_num);
+void dump_stat();
 int init_memory();

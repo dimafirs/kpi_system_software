@@ -10,6 +10,9 @@
 
 phys_mem_page mem_pool[POOL_SIZE] = {0};
 
+static uint32_t swap_calls = 0;
+static uint32_t total_freed = 0;
+
 static int init_phys_page(phys_mem_page *page, uint32_t index, uint32_t size) {
 	page->id = index;
 	page->state = FREE;
@@ -27,11 +30,13 @@ void mem_swaping(struct task_struct *task_pool, uint32_t proc_num, uint32_t iter
 	freed = 0; //number of physical pages that was swapped
 	for(i = 0; i < proc_num; i++){
 		for(j = 0; j < task_pool[i].page_count; j++){
-			if((task_pool[i].pages[j].flags.presence) &&
-					!(task_pool[i].pages[j].flags.reference))
+			if((task_pool[i].pages[j].flags.presence)
+					&& !(task_pool[i].pages[j].flags.reference))
 			{
-				if( (iter - task_pool[i].pages[j].ref_time) > WORKING_SET_ITERATIONS) {
+				if((iter-task_pool[i].pages[j].ref_time) > WORKING_SET_ITERATIONS)
+				{
 					task_pool[i].pages[j].page->state = FREE;
+					task_pool[i].pages[j].page = NULL;
 					task_pool[i].pages[j].state = INSWAP;
 					task_pool[i].pages[j].flags.presence = 0;
 					freed++;
@@ -39,10 +44,11 @@ void mem_swaping(struct task_struct *task_pool, uint32_t proc_num, uint32_t iter
 			}
 		}
 	}
-	printf("Successfully free %u pages. Swapping occurs at %u iteration\n", freed, iter);
+	total_freed += freed;
+	swap_calls++;
 }
 
-phys_mem_page *assign_free_page(void){
+static phys_mem_page *assign_free_page(void){
 	uint32_t i;
 	for(i = 0; i < POOL_SIZE; i++) {
 		if(mem_pool[i].state == FREE){
@@ -87,4 +93,13 @@ int init_memory(void) {
 			return -1;
 	}
 	return 0;
+}
+
+void dump_stat(){
+	printf("\nStatistic for simulation: \n\
+Physical memory pool size: %u pages\n\
+Iterations to be in working set: %u\n\
+mem_swapping() called for %u times\n\
+Total freed memory pages: %u\n",
+			POOL_SIZE, WORKING_SET_ITERATIONS, swap_calls, total_freed);
 }
