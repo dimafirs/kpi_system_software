@@ -1,9 +1,9 @@
-#ifndef _FS.H_
+#ifndef _FS_HEADER_
+#define _FS_HEADER_
 
 #include <stdint.h>
 #include <stddef.h>
 
-#define _FS.H_
 #define BLOCK_SIZE 512
 #define DESC_CNT 10000
 #define NAME_LENGTH 80
