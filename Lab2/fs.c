@@ -4,8 +4,97 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int chdir(char *file_path){
+static int change_dir(char *file_path){
 	return 0;
+}
+
+static int make_dir(char *file_path){
+	return 0;
+}
+
+static int remove_dir(char *file_path){
+	return 0;
+}
+
+static int mount(char *filesys_path){
+	return 0;
+}
+
+static int umount(char *filesys_path){
+	return 0;
+}
+
+static int create(char *file_path){
+	return 0;
+}
+
+
+static int list(char *file_path){
+	return 0;
+}
+
+int exec_cmd(char **container, uint32_t parts, char *wd){
+	if(!strcmp(container[0], "mount")){
+		if(parts != 2){
+			printf("Incorrect command format\n");
+			goto err;
+		}
+		return mount(container[1]);
+	}
+	if(!strcmp(container[0], "umount")){
+		if(parts != 2){
+			printf("Incorrect command format\n");
+			goto err;
+		}
+		return umount(container[1]);
+	}
+	if(!strcmp(container[0], "ls")){
+		if(parts > 2){
+			printf("Incorrect command format\n");
+			goto err;
+		}
+		if(parts == 1){
+			return list(wd);
+		}
+		if(parts == 2){
+			return list(container[1]);
+		}
+	}
+	if(!strcmp(container[0], "create")){
+		if(parts != 2){
+			printf("Incorrect command format\n");
+			goto err;
+		}
+		return create(container[1]);
+	}
+	if(!strcmp(container[0], "open")){
+
+	}
+	if(!strcmp(container[0], "close")){
+
+	}
+	if(!strcmp(container[0], "read")){
+
+	}
+	if(!strcmp(container[0], "write")){
+
+	}
+	if(!strcmp(container[0], "link")){
+
+	}
+	if(!strcmp(container[0], "unlink")){
+
+	}
+	if(!strcmp(container[0], "truncate")){
+
+	}
+	if(!strcmp(container[0], "filestat")){
+
+	}
+	printf("Unknown command %s\n", container[0]);
+	return -1;
+err:
+	return -1;
 }
 
 int parse_cmd(char **cmd_container, uint32_t part_cnt,
@@ -18,11 +107,13 @@ int parse_cmd(char **cmd_container, uint32_t part_cnt,
 		return -1;
 	i = 0;
 	part = 0;
+	char *cmd_part;
 	while((cmd[i] != 0) & (i < cmd_len)){
 		if(cmd[i] != ' '){
 			left = i;
 			i++;
-			while((cmd[i] != ' ') & (cmd[i] != 0) & (i<cmd_len)){
+			/* Checks space, enter and zero symbol */
+			while((cmd[i] != ' ')& (cmd[i] != 10) & (cmd[i] != 0) & (i<cmd_len)){
 				i++;
 			}
 			if((i == cmd_len) | part == part_cnt){
@@ -30,8 +121,9 @@ int parse_cmd(char **cmd_container, uint32_t part_cnt,
 				return -1;
 			}
 			right = i;
-			memcpy(cmd_container[part], cmd+left, right - left);
-			printf("string is: %s\n", cmd_container[part]);
+			cmd_part = malloc(right-left);
+			memcpy(cmd_part, cmd+left, right-left);
+			cmd_container[part] = cmd_part;
 			part++;
 		}
 		i++;

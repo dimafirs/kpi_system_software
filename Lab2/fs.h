@@ -32,6 +32,7 @@ struct flink {
 
 uint32_t open(char *file_path);
 int parse_cmd(char **cmd_container, uint32_t part_cnt, char *cmd, uint32_t cmd_len);
+int exec_cmd(char **container, uint32_t parts, char *wd);
 
 
 #endif //"_FS.H_"
