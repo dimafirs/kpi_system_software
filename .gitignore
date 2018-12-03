@@ -55,5 +55,6 @@ dkms.conf
 Lab1/mem_manager
 Lab1/.settings/
 Lab1/Debug/
+Lab2/file_sys
 .cproject
 .project

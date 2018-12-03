@@ -5,10 +5,32 @@
 #include <string.h>
 
 #define CMD_LEN 100
+#define CMD_PARTS 3
+
+static char *cmd;
+static char **container;
+
+void clear_cmds(){
+	uint32_t i;
+	memset(cmd, 0, CMD_LEN);
+	for(i = 0; i < CMD_PARTS; i++)
+		memset(container[i], 0, CMD_LEN);
+}
+
+void alloc_cmds(){
+	uint32_t i;
+	cmd = malloc(CMD_LEN);
+	container = malloc(CMD_PARTS);
+	for(i = 0; i< CMD_PARTS; i++)
+		container[i] = malloc(CMD_LEN);
+	clear_cmds();
+}
+
 int main(){
+	uint32_t i;
+	alloc_cmds();
 	char should_stop = 0;
 	char *work_dir = "/";
-	char *cmd = malloc(CMD_LEN);
 	printf("<<<Simple file system>>>\nEnter command below\n");
 	while(!should_stop){
 		printf("%s:", work_dir);
@@ -16,7 +38,13 @@ int main(){
 			printf("Error while reading input command\n");
 		else {
 			printf("your command is: %s", cmd);
-			memset(cmd, 0, CMD_LEN);
+			int parts = parse_cmd(container, CMD_PARTS, cmd, CMD_LEN);
+			if(parts <= 0){
+				printf("Error while parsing command");
+			}
+			clear_cmds();
 		}
 	}
+
+	return 0;
 }
