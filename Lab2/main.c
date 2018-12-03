@@ -28,6 +28,7 @@ void alloc_cmds(){
 
 int main(){
 	uint32_t i;
+	int parts;
 	alloc_cmds();
 	char should_stop = 0;
 	char *work_dir = "/";
@@ -37,11 +38,8 @@ int main(){
 		if(!fgets(cmd, CMD_LEN, stdin))
 			printf("Error while reading input command\n");
 		else {
-			printf("your command is: %s", cmd);
-			int parts = parse_cmd(container, CMD_PARTS, cmd, CMD_LEN);
-			if(parts <= 0){
-				printf("Error while parsing command");
-			}
+			parts = parse_cmd(container, CMD_PARTS, cmd, CMD_LEN);
+
 			clear_cmds();
 		}
 	}
