@@ -17,6 +17,12 @@ static int remove_dir(char *file_path){
 }
 
 static int mount(char *filesys_path){
+	FILE *fs = fopen(filesys_path, "rb");
+	if(NULL == fs){
+		printf("Error while opening file-system image\n");
+		return -1;
+	}
+
 	return 0;
 }
 

@@ -9,9 +9,9 @@
 #define NAME_LENGTH 80
 
 enum file_type {
-	REGULAR = 0,
+	DIR = 0,
+	REGULAR,
 	SYMLINK,
-	DIR
 };
 struct block {
 	uint8_t *data;

@@ -31,7 +31,7 @@ int main(){
 	int parts;
 	alloc_cmds();
 	char should_stop = 0;
-	char *work_dir = "/";
+	char *work_dir = "";
 	printf("<<<Simple file system>>>\nEnter command below\n");
 	while(!should_stop){
 		printf("%s:", work_dir);
