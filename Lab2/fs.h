@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define BLOCK_SIZE 512
+#define BLOCK_SIZE 128 //in 32 bits
 #define DESC_CNT 10000
 #define NAME_LENGTH 80
 
@@ -14,14 +14,15 @@ enum file_type {
 	SYMLINK,
 };
 struct block {
-	uint8_t *data;
+	unsigned state : 1; //0 - free
+	uint32_t data[BLOCK_SIZE];
 };
 
 struct fdesc {
 	uint32_t desc_id;
 	enum file_type type;
-	uint32_t link_cnt;
 	uint32_t size; //in blocks
+	uint32_t link_cnt;
 	struct block *blocks;
 };
 
